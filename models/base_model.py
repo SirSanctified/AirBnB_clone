@@ -28,7 +28,7 @@ class BaseModel:
                      of __dict__ of the instance
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         Initialize public instance attributes
         attributes:
@@ -36,14 +36,23 @@ class BaseModel:
             created_at (datetime): Date and time of when an instance is created
             updated_at (datetime): Date and time of when an instance is updated
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.datetime.today()
-        self.updated_at = datetime.datetime.today()
+        if len(kwargs) == 0:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.datetime.today()
+            self.updated_at = datetime.datetime.today()
+        else:
+            for k, v in kwargs.items():
+                if k == "created_at" or k == "updated_at":
+                    setattr(self, k, datetime.datetime.fromisoformat(v))
+                elif k == "__class__":
+                    continue
+                else:
+                    setattr(self, k, v)
 
     def __str__(self):
         """Returns string represantation in the format
         [<class name>] (<self.id>) <self.__dict__>"""
-        return "[{}] ({}) {}".format(type(self).__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(type(self).__name__, self.id, vars(self))
 
     def save(self):
         """Updates the public instance attribute updated_at

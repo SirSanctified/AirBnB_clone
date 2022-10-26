@@ -5,6 +5,7 @@
 """
 
 import unittest
+from uuid import uuid4
 from datetime import datetime
 import models.base_model as base_model
 
@@ -16,13 +17,23 @@ class TestBase(unittest.TestCase):
         """
             The function to initialise the base class for testing
         """
+        self.uid = str(uuid4())
+        self.creation = datetime.now()
+        self.updation = datetime.now()
+
         self.base = base_model.BaseModel()
+        self.copy = base_model.BaseModel(**self.base.to_dict())
+        self.without_kwargs = base_model.BaseModel(uid, creation, updation)
+        self.with_args_and_kwargs = base_model.BaseModel(
+                uid, creation, updation, **self.base.to_dict()
+                )
     
     def tearDown(self):
         """
             Do the clean up after every testcase
         """
         del self.base
+        del self.copy
 
 
     def test_id_is_str(self):
@@ -142,4 +153,60 @@ class TestBase(unittest.TestCase):
         """
         iso = self.base.updated_at.isoformat()
         self.assertTrue(iso == self.base.to_dict()['updated_at'])
+
+    def test_created_at_retained_when_kwargs_not_empty(self):
+        """
+            Test to make sure that created_at return from dictionary
+            is the same as the original one
+        """
+        self.assertEqual(self.copy.created_at, self.base.created_at)
+
+    def test_updated_at_retained_when_kwargs_not_empty(self):
+        """
+            Test if updated_at did not change when object was serialised
+        """
+        self.assertEqual(self.copy.updated_at, self.base.updated_at)
+
+    def test_id_retained_when_kwargs_not_empty(self):
+        """
+            Check if id was not changed during serialization
+        """
+        self.assertEqual(self.copy.id, self.base.id)
+
+    def test_args_is_not_used_for_id_when_kwargs_is_empty(self):
+        """
+            Check if id specified in *args is not used when kwargs is empty
+        """
+        self.assertFalse(self.without_kwargs.id == self.uid)
+
+    def test_args_is_not_used_for_created_at_when_kwargs_is_empty(self):
+        """
+            Check if created_at in args is not used when kwargs is empty
+        """
+        self.assertFalse(self.without_kwargs.created_at == self.creation)
+
+    def test_args_not_used_for_updated_at_when_kwargs_empty(self):
+        """
+            Check if updated_at in args is not used when kwargs is empty
+        """
+        self.assertFalse(self.without_kwargs.updated_at == self.updation)
+
+    def test_args_not_used_for_id_when_kwargs_not_empty(self):
+        """
+            check if id in args is not used when kwargs not empty
+        """
+        self.assertFalse(self.with_kwargs.id == self.uid)
+
+    def test_args_not_used_for_created_at_when_kwargs_not_empty(self):
+        """
+            Check if created_at in args not used when kwargs not empty
+        """
+        self.assertFalse(self.with_kwargs.created_at == self.creation)
+
+    def test_args_not_used_for_updated_at_when_kwargs_not_empty(self):
+        """
+            Check if updated_at in args not used when kwargs not empty
+        """
+        self.assertFalse(self.with_kwargs.updated_at == self.updation)
+
 

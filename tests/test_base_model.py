@@ -23,9 +23,11 @@ class TestBase(unittest.TestCase):
 
         self.base = base_model.BaseModel()
         self.copy = base_model.BaseModel(**self.base.to_dict())
-        self.without_kwargs = base_model.BaseModel(uid, creation, updation)
+        self.without_kwargs = base_model.BaseModel(
+                self.uid, self.creation, self.updation
+                )
         self.with_args_and_kwargs = base_model.BaseModel(
-                uid, creation, updation, **self.base.to_dict()
+                self.uid, self.creation, self.updation, **self.base.to_dict()
                 )
     
     def tearDown(self):
@@ -34,6 +36,8 @@ class TestBase(unittest.TestCase):
         """
         del self.base
         del self.copy
+        del self.without_kwargs
+        del self.with_kwargs
 
 
     def test_id_is_str(self):

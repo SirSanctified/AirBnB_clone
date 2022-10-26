@@ -15,15 +15,26 @@ class BaseModel:
         The base class with all base functionalities
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
             Initialise ech model with a unique id,
             each having a creation timestamp as well as the updation timestamp
         """
 
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = self.created_at
+        if len(kwargs) == 0:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+        else:
+            for k, v in kwargs.items():
+                if k == "created_at" or k == "updated_at":
+                    dt = datetime.fromisoformat(v)
+                    print(type(dt))
+                    setattr(self, k, dt)
+                elif k == "__class__":
+                    continue
+                else:
+                    setattr(self, k, v)
 
     def save(self):
         """

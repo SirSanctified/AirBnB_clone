@@ -1,16 +1,13 @@
 #!/usr/bin/python3
-"""
-Define the BaseModel class
-
-BaseModel defines all common attributes/methods for other classes
-
-It will handle the initialization, serialization and
-deserialization of all the instances
 
 """
+    This module defines a base model that will be inherited by all the other classes.
+    It handles the base functionality that all the other entities must possess
+"""
 
-import uuid
-import datetime
+from datetime import datetime
+from uuid import uuid4
+import json
 
 
 class BaseModel:
@@ -30,39 +27,46 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """
-        Initialize public instance attributes
-        attributes:
-            id (string): Unique id for each BaseModel
-            created_at (datetime): Date and time of when an instance is created
-            updated_at (datetime): Date and time of when an instance is updated
+            Initialise ech model with a unique id,
+            each having a creation timestamp as well as the updation timestamp
         """
-        if len(kwargs) == 0:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.datetime.today()
-            self.updated_at = datetime.datetime.today()
+
+        if not kwargs:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = self.created_at
         else:
             for k, v in kwargs.items():
-                if k == "created_at" or k == "updated_at":
-                    setattr(self, k, datetime.datetime.fromisoformat(v))
-                elif k == "__class__":
-                    continue
+                if k == "created_at":
+                    self.created_at = datetime.fromisoformat(v)
+                elif k == 'updated_at':
+                    self.updated_at = datetime.fromisoformat(v)
+                elif k == 'id':
+                    self.id = v
                 else:
-                    setattr(self, k, v)
-
-    def __str__(self):
-        """Returns string represantation in the format
-        [<class name>] (<self.id>) <self.__dict__>"""
-        return "[{}] ({}) {}".format(type(self).__name__, self.id, vars(self))
+                    continue
 
     def save(self):
-        """Updates the public instance attribute updated_at
-        with the current datetime"""
-        self.updated_at = datetime.datetime.today()
+        """
+            Every time an object is saved, it's updated_at timestamp
+            must be updated to the time the object was saved
+        """
+        self.updated_at = datetime.now()
 
     def to_dict(self):
-        """Returns a dictionary containing all keys/values of the instance"""
-        instance = vars(self)
-        instance["created_at"] = self.created_at.isoformat()
-        instance["updated_at"] = self.updated_at.isoformat()
-        instance["__class__"] = type(self).__name__
-        return instance
+        """
+            return the dictionary representation of this object
+        """
+        dictionary = self.__dict__.copy()
+        dictionary['__class__'] = self.__class__
+        dictionary['created_at'] = dictionary['created_at'].isoformat()
+        dictionary['updated_at'] = dictionary['updated_at'].isoformat()
+        return dictionary
+
+    def __str__(self):
+        """
+            Return the string representation of this object
+            in the form [<class name>] (<self.id>) <self.__dict__>
+        """
+        clname = self.__class__.__name__
+        return f'[{clname}] ({self.id}) {self.__dict__}'

@@ -21,20 +21,20 @@ class BaseModel:
             each having a creation timestamp as well as the updation timestamp
         """
 
-        if len(kwargs) == 0:
+        if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.now()
-            self.updated_at = datetime.now()
+            self.updated_at = self.created_at
         else:
             for k, v in kwargs.items():
-                if k == "created_at" or k == "updated_at":
-                    dt = datetime.fromisoformat(v)
-                    print(type(dt))
-                    setattr(self, k, dt)
-                elif k == "__class__":
-                    continue
+                if k == "created_at":
+                    self.created_at = datetime.fromisoformat(v)
+                elif k == 'updated_at':
+                    self.updated_at = datetime.fromisoformat(v)
+                elif k == 'id':
+                    self.id = v
                 else:
-                    setattr(self, k, v)
+                    continue
 
     def save(self):
         """
@@ -47,7 +47,7 @@ class BaseModel:
         """
             return the dictionary representation of this object
         """
-        dictionary = self.__dict__
+        dictionary = self.__dict__.copy()
         dictionary['__class__'] = self.__class__
         dictionary['created_at'] = dictionary['created_at'].isoformat()
         dictionary['updated_at'] = dictionary['updated_at'].isoformat()

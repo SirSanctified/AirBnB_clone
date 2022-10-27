@@ -22,12 +22,13 @@ class TestBase(unittest.TestCase):
         self.updation = datetime.now()
 
         self.base = base_model.BaseModel()
-        self.copy = base_model.BaseModel(**self.base.to_dict())
+        d = self.base.to_dict()
+        self.copy = base_model.BaseModel(**d)
         self.without_kwargs = base_model.BaseModel(
                 self.uid, self.creation, self.updation
                 )
         self.with_args_and_kwargs = base_model.BaseModel(
-                self.uid, self.creation, self.updation, **self.base.to_dict()
+                self.uid, self.creation, self.updation, **d
                 )
     
     def tearDown(self):
@@ -37,7 +38,7 @@ class TestBase(unittest.TestCase):
         del self.base
         del self.copy
         del self.without_kwargs
-        del self.with_kwargs
+        del self.with_args_and_kwargs
 
 
     def test_id_is_str(self):
@@ -141,7 +142,7 @@ class TestBase(unittest.TestCase):
             by to_dict()
         """
         self.assertTrue(
-                self.base.to_dict().contains(self.base.__dict__)
+                self.base.__dict__.items() in self.base.to_dict().items()
                 )
 
     def test_to_dict_created_at_attribute_is_in_iso_format(self):
@@ -199,18 +200,20 @@ class TestBase(unittest.TestCase):
         """
             check if id in args is not used when kwargs not empty
         """
-        self.assertFalse(self.with_kwargs.id == self.uid)
+        self.assertFalse(self.with_args_and_kwargs.id == self.uid)
 
     def test_args_not_used_for_created_at_when_kwargs_not_empty(self):
         """
             Check if created_at in args not used when kwargs not empty
         """
-        self.assertFalse(self.with_kwargs.created_at == self.creation)
+        self.assertFalse(
+                self.with_args_and_kwargs.created_at == self.creation
+                )
 
     def test_args_not_used_for_updated_at_when_kwargs_not_empty(self):
         """
             Check if updated_at in args not used when kwargs not empty
         """
-        self.assertFalse(self.with_kwargs.updated_at == self.updation)
-
-
+        self.assertFalse(
+                self.with_args_and_kwargs.updated_at == self.updation
+                )

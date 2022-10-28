@@ -8,12 +8,38 @@ import unittest
 from uuid import uuid4
 from datetime import datetime
 import models.base_model as base_model
+import inspect
 
 
 class TestBase(unittest.TestCase):
     """
         The class that houses all tests of the BaseModel class
     """
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up class method for the doc tests
+        """
+        cls.setup = inspect.getmembers(base_model.BaseModel, inspect.isfunction)
+    def test_module_docstring(self):
+        """
+        Tests if module docstring documentation exist
+        """
+        self.assertTrue(len(base_model.BaseModel.__doc__) >= 1)
+
+    def test_class_docstring(self):
+        """
+        Tests if class docstring documentation exist
+        """
+        self.assertTrue(len(base_model.BaseModel.__doc__) >= 1)
+
+    def test_func_docstrings(self):
+        """
+        Tests if methods docstring documntation exist
+        """
+        for func in self.setup:
+            self.assertTrue(len(func[1].__doc__) >= 1)
+
     def setUp(self):
         """
             The function to initialise the base class for testing
@@ -52,6 +78,14 @@ class TestBase(unittest.TestCase):
             The id derived from uuid4() must be of length 36
         """
         self.assertEqual(36, len(self.base.id))
+
+    def test_unique_id(self):
+        """test for id in BaseModel objects
+        """
+        base1 = base_model.BaseModel()
+        base2 = base_model.BaseModel()
+        self.assertNotEqual(self.base.id, base1.id)
+        self.assertNotEqual(self.base.id, base2.id)
 
     def test_created_at_is_datetime(self):
         """
@@ -136,15 +170,6 @@ class TestBase(unittest.TestCase):
         clname = type(self.base).__name__
         self.assertEqual(clname, self.base.to_dict()['__class__'])
 
-    def test_to_dict_returns_dict_attribute_of_object(self):
-        """
-            Check if self__dict__ is contained in the dictionary returned
-            by to_dict()
-        """
-        self.assertTrue(
-                self.base.__dict__.items() in self.base.to_dict().items()
-                )
-
     def test_to_dict_created_at_attribute_is_in_iso_format(self):
         """
             Check if the created_at attribute is in iso format
@@ -158,6 +183,14 @@ class TestBase(unittest.TestCase):
         """
         iso = self.base.updated_at.isoformat()
         self.assertTrue(iso == self.base.to_dict()['updated_at'])
+
+    def test_to_dict_more(self):
+        """tests to_dict method
+        """
+        my_dict = self.base.to_dict()
+        created_at = my_dict['created_at']
+        time = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S.%f")
+        self.assertEqual(self.base.created_at, time)
 
     def test_created_at_retained_when_kwargs_not_empty(self):
         """

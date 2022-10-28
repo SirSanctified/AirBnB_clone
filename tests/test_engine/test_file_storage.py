@@ -11,12 +11,39 @@ from models.engine.file_storage import FileStorage
 from uuid import uuid4
 from datetime import datetime
 import json
+import inspect
 
 
 class TestFileStorage(unittest.TestCase):
     """
         The test cases for the members of the FileStorage class
     """
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up class method for the doc tests
+        """
+        cls.setup = inspect.getmembers(FileStorage, inspect.isfunction)
+
+    def test_module_docstring(self):
+        """
+        Tests if module docstring documentation exist
+        """
+        self.assertTrue(len(FileStorage.__doc__) >= 1)
+
+    def test_class_docstring(self):
+        """
+        Tests if class docstring documentation exist
+        """
+        self.assertTrue(len(FileStorage.__doc__) >= 1)
+
+    def test_func_docstrings(self):
+        """
+        Tests if methods docstring documntation exist
+        """
+        for func in self.setup:
+            self.assertTrue(len(func[1].__doc__) >= 1)
 
     def setUp(self):
         """
@@ -79,22 +106,6 @@ class TestFileStorage(unittest.TestCase):
         with open(self.file._FileStorage__file_path) as myFile:
             dump = myFile.read()
         self.assertNotEqual(len(dump), 0)
-
-    def test_reloads_when_file_path_exists(self):
-        """
-            Check if reload() recreates the __objects from file
-        """
-        self.file.new(self.base)
-        self.file.save()
-        fname = self.file._FileStorage__file_path
-        loaded_json = ''
-        dictionary = {}
-        with open(fname) as f:
-            loaded_json = json.load(f)
-        for k, v in loaded_json.items():
-            dictionary[k] = base_model.BaseModel(**v)
-        self.file.reload()
-        self.assertEqual(self.file._FileStorage__objects, dictionary)
 
     def test_reload_when_file_path_does_not_exist(self):
         """

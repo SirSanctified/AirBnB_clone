@@ -44,10 +44,8 @@ class BaseModel:
                     self.created_at = datetime.fromisoformat(v)
                 elif k == 'updated_at':
                     self.updated_at = datetime.fromisoformat(v)
-                elif k == 'id':
-                    self.id = v
                 else:
-                    continue
+                    self.__dict__[k] = v
 
     def save(self):
         """

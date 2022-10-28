@@ -5,6 +5,13 @@
 import cmd
 import shlex
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
+import models
 
 
 class HBNBCommand(cmd.Cmd):
@@ -53,8 +60,8 @@ Return:
         key = serch_clss(arg, True)
         if key is None or not key:
             return False
-        objects = BaseModel.storage.all()
-        # print(objects[key])
+        objects = models.storage.all()
+        print(objects[key])
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id
@@ -66,8 +73,9 @@ Arguments:
         key = serch_clss(arg, True)
         if key is None or not key:
             return False
-        objects = BaseModel.storage.all()
-        # delete instance
+        objects = models.storage.all()
+        del objects[key]
+        models.storage.save()
 
     def do_all(self, arg):
         """Prints all string representation of all instances
@@ -79,24 +87,51 @@ Return:
     Print all instances based or not on the class name.
 """
         arg = shlex.split(arg)
-        objects = BaseModel.storage.all()
+        lst = []
+        objects = models.storage.all()
         if len(arg) == 0:
             for v in objects.values():
-                print(v)
+                lst.append(str(v))
+            print(lst)
             return False
 
         if arg[0] in classes:
             for k in objects.keys():
                 key = k.split(".")
                 if key[0] == arg[0]:
-                    print(objects[k])
+                    lst.append(str(objects[k]))
+            print(lst)
         else:
             print("** class doesn't exist **")
 
-    # def do_update(self, arg):
+    def do_update(self, arg):
+        """Updates an instance based on the class name and id by
+adding or updating attribute
+Usage: update <class name> <id> <attribute name> "<attribute value>"
+Arguments:
+    <class name>: Name of the class
+    <class id>: Id of the class
+    <attribute name>: Name of the attribute
+    <attribute value>: Value of the attribute
+    """
+        key = serch_clss(arg, True)
+        if key is None or not key:
+            return False
+        arg = shlex.split(arg)
+        if len(arg) == 2:
+            print("** attribute name missing **")
+            return False
+        if len(arg) == 3:
+            print("** value missing **")
+            return False
+
+        objects = models.storage.all()
+        objects[key].__dict__[arg[2]] = arg[3]
+        objects[key].save()
 
 
-classes = {"BaseModel": BaseModel}
+classes = {"BaseModel": BaseModel, "User": User, "State": State,\
+        "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
 
 
 def serch_clss(arg, ids=False):
@@ -122,7 +157,7 @@ def serch_clss(arg, ids=False):
         if len(arg) == 1:
             print("** instance id missing **")
             return False
-        objects = BaseModel.storage.all()
+        objects = models.storage.all()
         for obj in objects.keys():
             key = obj.split(".")
             if key[0] == arg[0] and key[1] == arg[1]:

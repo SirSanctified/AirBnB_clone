@@ -53,11 +53,24 @@ class FileStorage:
             (__file_path) exists ; otherwise, do nothing.
             If the file doesn’t exist, no exception should be raised)
         """
-        json_obj = ''
         try:
-            with open(FileStorage.__file_path) as infile:
-                json_obj = json.load(infile)
-            for k, v in json_obj.items():
-                FileStorage.__objects[k] = BaseModel(**v)
+            with open(FileStorage.__file_path, 'r') as my_file:
+                for key, value in json.load(my_file).items():
+                    if key not in FileStorage.__objects:
+                        class_create = value['__class__']
+                        if class_create == 'BaseModel':
+                            FileStorage.__objects[key] = BaseModel(**value)
+                        elif class_create == 'User':
+                            FileStorage.__objects[key] = User(**value)
+                        elif class_create == 'State':
+                            FileStorage.__objects[key] = State(**value)
+                        elif class_create == 'City':
+                            FileStorage.__objects[key] = City(**value)
+                        elif class_create == 'Amenity':
+                            FileStorage.__objects[key] = Amenity(**value)
+                        elif class_create == 'Place':
+                            FileStorage.__objects[key] = Place(**value)
+                        elif class_create == 'Review':
+                            FileStorage.__objects[key] = Review(**value)
         except Exception:
             pass

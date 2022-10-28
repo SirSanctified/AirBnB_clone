@@ -61,7 +61,7 @@ class BaseModel:
             return the dictionary representation of this object
         """
         dictionary = self.__dict__.copy()
-        dictionary['__class__'] = self.__class__
+        dictionary['__class__'] = type(self).__name__
         dictionary['created_at'] = dictionary['created_at'].isoformat()
         dictionary['updated_at'] = dictionary['updated_at'].isoformat()
         return dictionary
@@ -71,5 +71,5 @@ class BaseModel:
             Return the string representation of this object
             in the form [<class name>] (<self.id>) <self.__dict__>
         """
-        clname = self.__class__.__name__
+        clname = type(self).__name__
         return f'[{clname}] ({self.id}) {self.__dict__}'

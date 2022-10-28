@@ -10,6 +10,7 @@ import models.base_model as base_model
 from models.engine.file_storage import FileStorage
 from uuid import uuid4
 from datetime import datetime
+import json
 
 
 class TestFileStorage(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestFileStorage(unittest.TestCase):
             Clean up everything after each testcase so that the test cases
             are independent of each other
         """
-        fname = _FileStorage.__file_path
+        fname = self.file._FileStorage__file_path
         del self.base
         del self.file
         if os.path.exists(fname):
@@ -45,7 +46,7 @@ class TestFileStorage(unittest.TestCase):
         """
             Check if all() returns  dictionary __objects
         """
-        self.assertEqual(_FileStorage.__objects, self.file.all())
+        self.assertEqual(self.file._FileStorage__objects, self.file.all())
 
     def test_new_sets_an_object_in_objects(self):
         """
@@ -55,7 +56,7 @@ class TestFileStorage(unittest.TestCase):
         clname = type(self.base).__name__
         id = self.base.id
         key = f'{clname}.{id}'
-        self.assertTrue(key in _FileStorage.__objects)
+        self.assertTrue(key in self.file._FileStorage__objects)
 
     def test_objects_keys_are_in_the_form_classname_id(self):
         """
@@ -66,7 +67,7 @@ class TestFileStorage(unittest.TestCase):
         clname = type(self.base).__name__
         id = self.base.id
         key = f'{clname}.{id}'
-        self.assertEqual(key, _FileStorage.__objects.keys()[0])
+        self.assertTrue(key in self.file._FileStorage__objects.keys())
 
     def test_save_serializes_objects_to_file_path(self):
         """
@@ -75,31 +76,30 @@ class TestFileStorage(unittest.TestCase):
         """
         self.file.new(self.base)
         self.file.save()
-        filename = _FileStorage.__file_path
-        saved_json = ''
-        with open(filename) as f:
-            saved_json += f.read()
-        self.assertEqual(json.dumps(_FileStorage.__objects, saved_json))
+        with open(self.file._FileStorage__file_path) as myFile:
+            dump = myFile.read()
+        self.assertNotEqual(len(dump), 0)
 
     def test_reloads_when_file_path_exists(self):
         """
             Check if reload() recreates the __objects from file
         """
         self.file.new(self.base)
-        self.save()
-        _FileStorage.__objects.clear()
-        fname = _FileStorage.__file_path
+        self.file.save()
+        fname = self.file._FileStorage__file_path
         loaded_json = ''
+        dictionary = {}
         with open(fname) as f:
-            loaded_json += f.read()
-
-        self.file.reloads()
-        self.assertEqual(_FileStorage.__objects, json.loads(loaded_json))
+            loaded_json = json.load(f)
+        for k, v in loaded_json.items():
+            dictionary[k] = base_model.BaseModel(**v)
+        self.file.reload()
+        self.assertEqual(self.file._FileStorage__objects, dictionary)
 
     def test_reload_when_file_path_does_not_exist(self):
         """
             Check if reloads() does nothing when __file_path does not exist
         """
-        before = _FileStorage.__objects
-        self.file.reloads()
-        self.assertEqual(before, _FileStorage.__objects)
+        before = self.file._FileStorage__objects
+        self.file.reload()
+        self.assertEqual(before, self.file._FileStorage__objects)

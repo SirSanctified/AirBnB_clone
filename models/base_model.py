@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 """
-    This module defines a base model that will be inherited by all the other classes.
+    This module defines a base model that will be inherited by all the other
+    classes.
     It handles the base functionality that all the other entities must possess
 """
 

@@ -9,6 +9,7 @@ from uuid import uuid4
 from datetime import datetime
 import models.base_model as base_model
 
+
 class TestBase(unittest.TestCase):
     """
         The class that houses all tests of the BaseModel class
@@ -30,7 +31,7 @@ class TestBase(unittest.TestCase):
         self.with_args_and_kwargs = base_model.BaseModel(
                 self.uid, self.creation, self.updation, **d
                 )
-    
+
     def tearDown(self):
         """
             Do the clean up after every testcase
@@ -39,7 +40,6 @@ class TestBase(unittest.TestCase):
         del self.copy
         del self.without_kwargs
         del self.with_args_and_kwargs
-
 
     def test_id_is_str(self):
         """
@@ -93,13 +93,13 @@ class TestBase(unittest.TestCase):
         """
         self.base.save()
         self.assertFalse(self.base.created_at == self.base.updated_at)
-    
+
     def test_str_returns_correct_representation_of_base(self):
         """
             Test if str() returns [<class name>] (<self.id>) <self.__dict__>
         """
         d = self.base.__dict__
-        clname = self.base.__class__.__name__
+        clname = type(self.base).__name__
         self.assertEqual(f'[{clname}] ({self.base.id}) {d}', str(self.base))
 
     def test_to_dict_returns_a_dictionary(self):
@@ -133,7 +133,7 @@ class TestBase(unittest.TestCase):
             Check if the value associated with the __class__ key
             is the class name of the object
         """
-        clname = self.base.__class__
+        clname = type(self.base).__name__
         self.assertEqual(clname, self.base.to_dict()['__class__'])
 
     def test_to_dict_returns_dict_attribute_of_object(self):

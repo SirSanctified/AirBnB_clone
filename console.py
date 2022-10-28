@@ -130,8 +130,8 @@ Arguments:
         objects[key].save()
 
 
-classes = {"BaseModel": BaseModel, "User": User, "State": State,\
-        "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
+classes = {"BaseModel": BaseModel, "User": User, "State": State,
+           "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
 
 
 def serch_clss(arg, ids=False):

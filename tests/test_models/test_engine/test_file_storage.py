@@ -12,6 +12,8 @@ from uuid import uuid4
 from datetime import datetime
 import json
 import inspect
+from models import storage
+from models.user import User
 
 
 class TestFileStorage(unittest.TestCase):

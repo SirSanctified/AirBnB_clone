@@ -20,7 +20,9 @@ class TestBase(unittest.TestCase):
         """
         Set up class method for the doc tests
         """
-        cls.setup = inspect.getmembers(base_model.BaseModel, inspect.isfunction)
+        cls.setup = inspect.getmembers(base_model.BaseModel,
+                                       inspect.isfunction)
+
     def test_module_docstring(self):
         """
         Tests if module docstring documentation exist

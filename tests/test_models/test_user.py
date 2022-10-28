@@ -65,10 +65,10 @@ class TestUser(unittest.TestCase):
     def test_basic_attribute_set(self):
         """Basic attribute tests for user model
         """
-        self.Us.first_name = 'Meco'
-        self.Us.last_name = 'Montes'
-        self.assertEqual(self.Us.first_name, 'Meco')
-        self.assertEqual(self.Us.last_name, 'Montes')
+        self.Us.first_name = 'Sanctified'
+        self.Us.last_name = 'Sifiso'
+        self.assertEqual(self.Us.first_name, 'Sanctified')
+        self.assertEqual(self.Us.last_name, 'Sifiso')
 
     def test_email(self):
         """tests the user's email attribute

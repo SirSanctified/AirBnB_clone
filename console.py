@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 """
+Command intepreter to handle the commands
+
+contains the entry point of the command interpreter
 """
 
 import cmd
@@ -18,6 +21,13 @@ import os
 
 
 class HBNBCommand(cmd.Cmd):
+    """
+    Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id
+
+    Prints the string representation of an instance based on the class name and id
+
+    Deletes an instance based on the class name and id (save the change into the JSON file)
+    """
     prompt = "(hbnb) "
 
     def emptyline(self):

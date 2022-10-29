@@ -4,6 +4,7 @@
 
 import cmd
 import shlex
+import json
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -12,6 +13,8 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 import models
+from signal import SIGKILL
+import os
 
 
 class HBNBCommand(cmd.Cmd):
@@ -20,6 +23,42 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """Overide the emptyline method to skip emptyl line"""
         return False
+
+    def parseline(self, line):
+
+        dot = line.find(".")
+        br = line.find("(")
+        br2 = line.find(")")
+
+        if dot != -1:
+            if br != -1 and br2 != -1:
+                clss = line.split(".")[0]
+                cmnd = line.split(".")[1].split("(")[0]
+                arg = line.split(".")[1].split("(")[1]
+                if cmnd == "count":
+                    objects = models.storage.all()
+                    lst = []
+                    if clss in classes:
+                        for k in objects.keys():
+                            key = k.split(".")
+                            if key[0] == clss:
+                                lst.append(str(objects[k]))
+                        print(len(lst))
+                        line = "\n"
+                    else:
+                        print("** class doesn't exist **")
+                elif cmnd == "show" or cmnd == "destroy" or cmnd == "all":
+                    line = f"{cmnd} {clss} {arg[:-1]}"
+                elif cmnd == "update":
+                    if arg.find("{") != -1 and arg.find("}") != -1:
+                        # Handle update with dictionary
+                        pass
+                    else:
+                        arg = arg.split(",")
+                        line = f"{cmnd} {clss} {arg[0]}\
+                                {arg[1][1:]} {arg[2][1:-1]}"
+
+        return cmd.Cmd.parseline(self, line)
 
     def do_quit(self, arg):
         """Quit command to exit the console
@@ -129,9 +168,14 @@ Arguments:
         objects[key].__dict__[arg[2]] = arg[3]
         objects[key].save()
 
+        if pid <= 0:
+            return True
+
 
 classes = {"BaseModel": BaseModel, "User": User, "State": State,
            "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
+
+pid = 1
 
 
 def serch_clss(arg, ids=False):

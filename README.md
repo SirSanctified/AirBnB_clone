@@ -1,5 +1,4 @@
 <img src="https://is5-ssl.mzstatic.com/image/thumb/Purple123/v4/fd/ac/b4/fdacb4f9-4c73-1ca6-5595-ef18f821ee62/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-0-0-0-GLES2_U002c0-512MB-85-220-0-0.png/246x0w.png">
-<img src="https://image.shutterstock.com/image-illustration/clone-icon-illustration-creative-sign-260nw-1497218057.jpg">
 
 # 0x00 AirBnB clone - The console
 
@@ -177,7 +176,6 @@ Feel free to contact us!
 - GitHub at <a href="https://github.com/SirSanctified">`SirSanctified`</a>
 - GitHub at <a href="https://github.com/SifisoSithole">`SifisiSithole`</a>
 - Twitter at <a href="https://twitter.com/Sir_sanctified">`@Sir_sanctifed`</a>
-- Twitter at <a href="https://twitter.com/">`@sifiso`</a>
 
 ---
 

@@ -22,11 +22,22 @@ import os
 
 class HBNBCommand(cmd.Cmd):
     """
-    Creates a new instance of BaseModel, saves it (to the JSON file) and prints the id
+    This class servs as a command intepretor using the cmd module
+    methods:
+        create: Creates a new instance of BaseModel,
+        saves it (to the JSON file) and prints the id
 
-    Prints the string representation of an instance based on the class name and id
+        show: Prints the string representation of an instance based
+        on the class name and id
 
-    Deletes an instance based on the class name and id (save the change into the JSON file)
+        destroy: Deletes an instance based on the class name and id
+        (save the change into the JSON file)
+
+        all: Prints all string representation of all instances
+        based or not on the class name.
+
+        update: Updates an instance based on the class name and
+        id by adding or updating attribute
     """
     prompt = "(hbnb) "
 

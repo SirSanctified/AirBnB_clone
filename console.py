@@ -73,7 +73,16 @@ class HBNBCommand(cmd.Cmd):
                 elif cmnd == "update":
                     if arg.find("{") != -1 and arg.find("}") != -1:
                         # Handle update with dictionary
-                        pass
+                        ids = arg[1:37]
+                        my_dict = arg[40:-1]
+                        my_dict = my_dict.replace('"', "").replace("'", "")
+                        my_dict = my_dict.replace("{", "").replace("}", "")
+                        my_dict = my_dict.split(", ")
+                        for ele in my_dict:
+                            s = f"{clss} {ids} {ele.split(': ')[0]}\
+                                 {ele.split(': ')[1]}"
+                            self.do_update(s)
+                            line = "\n"
                     else:
                         arg = arg.split(",")
                         line = f"{cmnd} {clss} {arg[0]}\

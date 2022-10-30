@@ -72,15 +72,14 @@ class HBNBCommand(cmd.Cmd):
                     line = f"{cmnd} {clss} {arg[:-1]}"
                 elif cmnd == "update":
                     if arg.find("{") != -1 and arg.find("}") != -1:
-                        # Handle update with dictionary
-                        ids = arg[1:37]
-                        my_dict = arg[40:-1]
-                        my_dict = my_dict.replace('"', "").replace("'", "")
+                        my_dict = arg.replace('"', "").replace("'", "")
                         my_dict = my_dict.replace("{", "").replace("}", "")
-                        my_dict = my_dict.split(", ")
+                        my_dict = my_dict.replace(")", "").split(", ")
+                        ids = my_dict.pop(0)
                         for ele in my_dict:
-                            s = f"{clss} {ids} {ele.split(': ')[0]}\
-                                 {ele.split(': ')[1]}"
+                            tri = ele.split(': ')[0]
+                            value = ele.split(': ')[1]
+                            s = f'{clss} {ids} "{tri}" "{value}"'
                             self.do_update(s)
                             line = "\n"
                     else:
@@ -183,6 +182,7 @@ Arguments:
     <attribute name>: Name of the attribute
     <attribute value>: Value of the attribute
     """
+        print(arg)
         key = serch_clss(arg, True)
         if key is None or not key:
             return False

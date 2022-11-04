@@ -5,10 +5,3 @@ footer {
     position: fixed;
     margin-bottom: 0px;
 }
-
-.footer__div {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
